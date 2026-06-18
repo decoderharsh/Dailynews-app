@@ -69,6 +69,7 @@ export class News extends Component {
     return (
       <div>
           <div className='container'>
+ 
           <h2 className="text-center" style ={{margin:'30px 0px'}}>DailyNews - Top Headlines</h2>
           {this.state.loading && <Spinner/>}
           
