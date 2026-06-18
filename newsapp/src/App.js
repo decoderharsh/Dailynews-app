@@ -6,10 +6,23 @@ import LoadingBar from "react-top-loading-bar";
  
 
 export default class App extends Component {
+  state = {
+  mode: "light",
+  progress :0
+};
+
+toggleMode = () => {
+  if (this.state.mode === "light") {
+    this.setState({ mode: "dark" });
+    document.body.style.backgroundColor = "#121212";
+    document.body.style.color = "white";
+  } else {
+    this.setState({ mode: "light" });
+    document.body.style.backgroundColor = "white";
+    document.body.style.color = "black";
+  }
+};
     pageSize = 15;
-    state = {
-      progress :0
-    }
     setProgress=(progress)=>{
         this.setState({progress: progress})
     }
@@ -17,7 +30,7 @@ export default class App extends Component {
     return (
       <div>         
   <BrowserRouter>
-   <Navbar/>
+   <Navbar  mode={this.state.mode} toggleMode={this.toggleMode}/>
     <LoadingBar
         color="#f11946"
         height={3}
