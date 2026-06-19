@@ -1,81 +1,59 @@
-import React, { Component } from 'react'
+import React,{useEffect,useState} from 'react'
 import NewsItem from './NewsItem'
 import Spinner from './Spinner';
 import PropTypes from  'prop-types'
 
-
-
-
-export class News extends Component {
-  static defaultProps={
-    pageSize : 5,
-    locale : "in",
-    category : "general"
-  }
-  static propTypes = {
-    pageSize: PropTypes.number,
-    locale: PropTypes.string,
-    category: PropTypes.string
-  }
-  capitalizeFirstLetter = (string)=>{
+ const News =(props)=> {
+  const [articles,setArticles] = useState([]);
+  const [loading,setLoading] = useState(false);
+  const [page,setPage] = useState(1);
+  const [totalResults,setTotalResults] = useState(0);
+ 
+  
+  const capitalizeFirstLetter = (string)=>{
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  constructor(props){
-    super(props);
-    this.state = {
-      articles : [],
-      loading : false ,
-      page : 1,
-     totalResults: 0
-    }
-    document.title = `${this.capitalizeFirstLetter(this.props.category)}-DailyNews`;
-  }
-  async updateNews(){
-    this.props.setProgress(10);
-    const url = `https://api.thenewsapi.com/v1/news/top?api_token=e1D2Drwk2AgviWKZAXUiiE2390Al2ppqAS9IFKjY&locale=${this.props.locale}&categories=${this.props.category}&page=${this.state.page}&limit=${this.props.pageSize}`;
-   this.setState({loading : true});
+   document.title = `${capitalizeFirstLetter(props.category)}-DailyNews`;
+
+  const updateNews= async ()=>{
+    props.setProgress(10);
+    const url = `https://api.thenewsapi.com/v1/news/top?api_token=e1D2Drwk2AgviWKZAXUiiE2390Al2ppqAS9IFKjY&locale=${props.locale}&categories=${props.category}&page=${page}&limit=${props.pageSize}`;
+   setLoading(true);
     let Data = await fetch(url);
-    this.props.setProgress(30);
+    props.setProgress(30);
     let parsedData = await Data.json();
     console.log(parsedData)
-    this.props.setProgress(70);
-    this.setState({articles : parsedData.data , totalResults: parsedData.meta.found, loading : false})
-     this.props.setProgress(100);
+    props.setProgress(70);
+    setArticles(parsedData.data);
+    setTotalResults(parsedData.meta.found);
+    setLoading(false);
+    props.setProgress(100);
   }
+  useEffect(()=>{
+    updateNews();
+  },[page,props.category])
  
-   async componentDidMount(){
-
-    this.updateNews();
-
-  }
- 
-
-  handlePrevClick = async ()=>{
-   this.setState({
-      page : this.state.page -1
-  });
-  this.updateNews();
+ const handlePrevClick = async ()=>{
+   setPage(page - 1);
+  
 }
-  handleNextClick = async ()=>{
-    if(!(this.state.page+1>Math.ceil(this.state.totalResults/this.props.pageSize))){
-
-    this.setState({
-      page : this.state.page +1
-  });
-  this.updateNews();
+ const handleNextClick = async ()=>{
+    if(!(page+1>Math.ceil(totalResults/props.pageSize))){
+      setPage(page +1)
+  
   }
   }
-  render() {
+  
     return (
       <div>
           <div className='container'>
  
           <h2 className="text-center" style ={{margin:'30px 0px'}}>DailyNews - Top Headlines</h2>
-          {this.state.loading && <Spinner/>}
+          {loading && <Spinner/>}
           
           
           <div className="row">
-            {!this.state.loading && this.state.articles && this.state.articles.map((element)=>{
+            {!loading && articles && articles.map((element)=>{
               return  <div className='col-md-4' key={element.url}>
               <NewsItem title = {element.title?element.title.slice(0,68):""} description = {element.description?element.description.slice(0,120):""} imageUrl = {element.image_url} newsUrl={element.url}  date={element.published_at} source={element.source}/>
             </div>
@@ -84,8 +62,8 @@ export class News extends Component {
             </div>
           
             <div className="container d-flex justify-content-between">
-            <button type="button" disabled={this.state.page<=1} className="btn btn-dark" onClick={this.handlePrevClick}> &larr;Previous</button>
-            <button type="button"  disabled={this.state.page >=Math.ceil(this.state.totalResults / this.props.pageSize)} className="btn btn-dark" onClick={this.handleNextClick}>Next &rarr;</button>
+            <button type="button" disabled={page<=1} className="btn btn-dark" onClick={handlePrevClick}> &larr;Previous</button>
+            <button type="button"  disabled={page >=Math.ceil(totalResults / props.pageSize)} className="btn btn-dark" onClick={handleNextClick}>Next &rarr;</button>
             </div>
            
           
@@ -96,6 +74,16 @@ export class News extends Component {
         
     )
   }
-}
+  News.defaultProps={
+    pageSize : 5,
+    locale : "in",
+    category : "general"
+  }
+  News.propTypes = {
+    pageSize: PropTypes.number,
+    locale: PropTypes.string,
+    category: PropTypes.string
+  }
+
 
 export default News

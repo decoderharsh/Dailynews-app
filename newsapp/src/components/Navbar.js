@@ -1,14 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
-export class Navbar extends Component {
-  render() {
+ const Navbar =(props)=> {
+ 
     return (
       <div>
-        <nav className={`navbar navbar-expand-lg navbar-${this.props?.mode || "light"} bg-${this.props?.mode || "light"}`}
+        <nav className={`navbar navbar-expand-lg navbar-${props?.mode || "light"} bg-${props?.mode || "light"}`}
         >
           <div className="container-fluid">
-            <Link className={`navbar-brand text-${(this.props?.mode || "light") === "light" ? "dark" : "light"}`} to="/">Dailynews</Link>
+            <Link className={`navbar-brand text-${(props?.mode || "light") === "light" ? "dark" : "light"}`} to="/">Dailynews</Link>
             <button
               className="navbar-toggler"
               type="button"
@@ -18,7 +18,7 @@ export class Navbar extends Component {
               aria-expanded="false"
               aria-label="Toggle navigation"
             >
-              <span  className={`navbar-toggler-icon ${(this.props?.mode || "light") === "dark" ? "navbar-dark": "" }`}></span>
+              <span  className={`navbar-toggler-icon ${(props?.mode || "light") === "dark" ? "navbar-dark": "" }`}></span>
             </button>
             <div
               className="collapse navbar-collapse"
@@ -70,9 +70,9 @@ export class Navbar extends Component {
                 </li>
               </ul>
               <div
-                className={`form-check form-switch text-${(this.props?.mode || "light") === "light" ? "dark" : "light"}`}
+                className={`form-check form-switch text-${(props?.mode || "light") === "light" ? "dark" : "light"}`}
 >
-                <input className="form-check-input" type="checkbox" onChange={this.props?.toggleMode} />
+                <input className="form-check-input" type="checkbox" onChange={props?.toggleMode} />
                 <label className="form-check-label">Dark Mode</label>
               </div>
             </div>
@@ -81,6 +81,6 @@ export class Navbar extends Component {
       </div>
     );
   }
-}
+
 
 export default Navbar;
